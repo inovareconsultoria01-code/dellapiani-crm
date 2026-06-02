@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dellapiani CRM Premium</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <img src="logo.jpg" class="login-logo" alt="Dellapiani"/>
+      <h1>Dellapiani CRM</h1>
+      <p>Atendimento, vendas, WhatsApp e gestão comercial</p>
+      <input id="loginUser" placeholder="Usuário" value="admin"/>
+      <input id="loginPass" type="password" placeholder="Senha" value="1234"/>
+      <button onclick="login()">Entrar no sistema</button>
+      <small>Usuário: admin | Senha: 1234</small>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand"><img src="logo.jpg" alt="Dellapiani"/></div>
+      <button onclick="showPage('dashboard')" class="nav active">Dashboard</button>
+      <button onclick="showPage('atendimentos')" class="nav">Atendimentos</button>
+      <button onclick="showPage('clientes')" class="nav">Clientes</button>
+      <button onclick="showPage('funil')" class="nav">Funil de Vendas</button>
+      <button onclick="showPage('celulares')" class="nav">Celulares</button>
+      <button onclick="showPage('disparos')" class="nav">Disparos</button>
+      <button onclick="showPage('vendedores')" class="nav">Vendedores</button>
+      <button onclick="showPage('relatorios')" class="nav">Relatórios</button>
+      <button onclick="logout()" class="nav bottom">Sair</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p>Gestão centralizada para equipe comercial Dellapiani</p>
+        </div>
+        <div class="searchbox">
+          <input id="globalSearch" placeholder="Buscar cliente, telefone ou vendedor..." oninput="renderAll()"/>
+        </div>
+      </header>
+
+      <section id="dashboard" class="page">
+        <div class="cards">
+          <div class="card gold"><span id="totalClientes">0</span><p>Leads totais</p></div>
+          <div class="card"><span id="totalOrcamentos">R$ 0,00</span><p>Valor em negociação</p></div>
+          <div class="card"><span id="totalFechados">0</span><p>Pedidos fechados</p></div>
+          <div class="card"><span id="taxaConversao">0%</span><p>Taxa de conversão</p></div>
+        </div>
+
+        <div class="grid">
+          <div class="panel big">
+            <div class="panel-head">
+              <h2>Funil de Vendas</h2>
+              <select id="filtroVendedorDash" onchange="renderAll()"></select>
+            </div>
+            <div id="miniFunil"></div>
+          </div>
+          <div class="panel">
+            <h2>Atendimentos em tempo real</h2>
+            <div id="tempoReal"></div>
+          </div>
+          <div class="panel">
+            <h2>Ranking dos vendedores</h2>
+            <div id="ranking"></div>
+          </div>
+          <div class="panel big">
+            <h2>Últimos leads</h2>
+            <div id="ultimosLeads"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="atendimentos" class="page hidden">
+        <div class="panel">
+          <h2>Inbox unificada de WhatsApp</h2>
+          <p class="muted">O gestor acompanha todos os celulares, vendedores e conversas em um só lugar.</p>
+          <div id="listaAtendimentos"></div>
+        </div>
+      </section>
+
+      <section id="clientes" class="page hidden">
+        <div class="panel">
+          <h2>Novo cliente / lead</h2>
+          <div class="form">
+            <input id="nome" placeholder="Nome do cliente"/>
+            <input id="telefone" placeholder="WhatsApp com DDD"/>
+            <input id="origem" placeholder="Origem: Loja, Instagram, arquiteto..."/>
+            <input id="produto" placeholder="Produto de interesse"/>
+            <input id="valor" type="number" placeholder="Valor estimado"/>
+            <select id="vendedor"></select>
+            <select id="status"></select>
+            <select id="celularResponsavel"></select>
+            <textarea id="obs" placeholder="Observações"></textarea>
+            <button onclick="salvarCliente()">Salvar cliente</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Clientes cadastrados</h2>
+          <div id="listaClientes"></div>
+        </div>
+      </section>
+
+      <section id="funil" class="page hidden">
+        <div class="panel">
+          <h2>Funil comercial</h2>
+          <div id="kanban" class="kanban"></div>
+        </div>
+      </section>
+
+      <section id="celulares" class="page hidden">
+        <div class="panel">
+          <h2>Celulares conectados</h2>
+          <p class="muted">Na versão online com servidor, cada número é vinculado por QR Code usando Evolution API ou WhatsApp Cloud API.</p>
+          <div class="form-row">
+            <input id="nomeCelular" placeholder="Nome do celular: Vendas 01"/>
+            <input id="numeroCelular" placeholder="Número com DDD"/>
+            <select id="vendedorCelular"></select>
+            <button onclick="adicionarCelular()">Adicionar celular</button>
+          </div>
+          <div id="listaCelulares"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Como vincular todos os celulares</h2>
+          <div class="steps">
+            <p><b>1.</b> Cada vendedor terá um número WhatsApp Business.</p>
+            <p><b>2.</b> O gestor adiciona o número na aba Celulares.</p>
+            <p><b>3.</b> Na versão com servidor, o sistema gera QR Code para cada número.</p>
+            <p><b>4.</b> Após escanear, todas as mensagens entram na inbox do gestor.</p>
+            <p><b>5.</b> O gestor acompanha atendimento, tempo de resposta, leads e vendas.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="disparos" class="page hidden">
+        <div class="panel">
+          <h2>Disparos automatizados</h2>
+          <p class="muted">Use para campanhas, follow-up, pós-venda e reativação. Envie apenas para clientes autorizados.</p>
+          <div class="form">
+            <input id="campanhaNome" placeholder="Nome da campanha"/>
+            <select id="campanhaPublico">
+              <option>Todos os clientes</option>
+              <option>Orçamento enviado</option>
+              <option>Negociação</option>
+              <option>Pedido fechado</option>
+              <option>Perdido</option>
+            </select>
+            <input id="campanhaHorario" type="datetime-local"/>
+            <textarea id="campanhaMensagem" placeholder="Mensagem. Ex: Olá, {nome}! Temos novidades na Dellapiani..."></textarea>
+            <button onclick="criarDisparo()">Criar disparo</button>
+          </div>
+          <div id="listaDisparos"></div>
+        </div>
+      </section>
+
+      <section id="vendedores" class="page hidden">
+        <div class="panel">
+          <h2>Vendedores</h2>
+          <div class="form-row short">
+            <input id="novoVendedor" placeholder="Nome do vendedor"/>
+            <button onclick="adicionarVendedor()">Adicionar</button>
+          </div>
+          <div id="listaVendedores"></div>
+        </div>
+      </section>
+
+      <section id="relatorios" class="page hidden">
+        <div class="panel">
+          <h2>Relatórios gerenciais</h2>
+          <button onclick="exportarCSV()">Exportar clientes em CSV</button>
+          <div id="relatorioResumo"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+<script src="script.js"></script>
+</body>
+</html>
