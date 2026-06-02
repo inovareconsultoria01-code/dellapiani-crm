@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dellapiani CRM WhatsApp Real</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <img src="logo.jpg" class="login-logo" alt="Dellapiani"/>
+      <h1>Dellapiani CRM</h1>
+      <p>CRM + WhatsApp + Disparos reais</p>
+      <input id="loginUser" value="admin" placeholder="Usuário"/>
+      <input id="loginPass" value="1234" type="password" placeholder="Senha"/>
+      <button onclick="login()">Entrar</button>
+      <small>Usuário: admin | Senha: 1234</small>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand"><img src="logo.jpg" alt="Dellapiani"/></div>
+      <button onclick="showPage('dashboard')" class="nav active">Dashboard</button>
+      <button onclick="showPage('clientes')" class="nav">Clientes</button>
+      <button onclick="showPage('funil')" class="nav">Funil de Vendas</button>
+      <button onclick="showPage('whatsapp')" class="nav">WhatsApp / QR Code</button>
+      <button onclick="showPage('disparos')" class="nav">Disparos Reais</button>
+      <button onclick="showPage('vendedores')" class="nav">Vendedores</button>
+      <button onclick="showPage('config')" class="nav">Configurações</button>
+      <button onclick="logout()" class="nav bottom">Sair</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="connectionStatus">Verificando conexão...</p>
+        </div>
+        <input id="search" placeholder="Buscar cliente..." oninput="renderAll()"/>
+      </header>
+
+      <section id="dashboard" class="page">
+        <div class="cards">
+          <div class="card"><span id="totalClientes">0</span><p>Clientes</p></div>
+          <div class="card"><span id="valorTotal">R$ 0,00</span><p>Valor em negociação</p></div>
+          <div class="card"><span id="totalFechados">0</span><p>Fechados</p></div>
+          <div class="card"><span id="taxaConversao">0%</span><p>Conversão</p></div>
+        </div>
+
+        <div class="grid">
+          <div class="panel big">
+            <h2>Funil de Vendas</h2>
+            <div id="miniFunil"></div>
+          </div>
+          <div class="panel">
+            <h2>Resumo WhatsApp</h2>
+            <div id="resumoWhatsApp"></div>
+          </div>
+          <div class="panel">
+            <h2>Ranking de vendedores</h2>
+            <div id="ranking"></div>
+          </div>
+          <div class="panel big">
+            <h2>Últimos clientes</h2>
+            <div id="ultimosClientes"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="clientes" class="page hidden">
+        <div class="panel">
+          <h2>Novo cliente</h2>
+          <div class="form">
+            <input id="nome" placeholder="Nome do cliente"/>
+            <input id="telefone" placeholder="WhatsApp com DDD"/>
+            <input id="origem" placeholder="Origem"/>
+            <input id="produto" placeholder="Produto de interesse"/>
+            <input id="valor" type="number" placeholder="Valor estimado"/>
+            <select id="vendedor"></select>
+            <select id="status"></select>
+            <textarea id="obs" placeholder="Observações"></textarea>
+            <button onclick="saveClient()">Salvar cliente</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Clientes</h2>
+          <div id="listaClientes"></div>
+        </div>
+      </section>
+
+      <section id="funil" class="page hidden">
+        <div class="panel">
+          <h2>Funil comercial</h2>
+          <div id="kanban"></div>
+        </div>
+      </section>
+
+      <section id="whatsapp" class="page hidden">
+        <div class="panel">
+          <h2>Conectar WhatsApp</h2>
+          <p class="muted">Crie uma instância, gere o QR Code e escaneie no WhatsApp do vendedor.</p>
+          <div class="form-row">
+            <input id="instanceName" placeholder="Nome da instância. Ex: vendas01"/>
+            <button onclick="createInstance()">Criar instância</button>
+            <button onclick="getQRCode()">Gerar QR Code</button>
+            <button onclick="checkInstance()">Verificar conexão</button>
+          </div>
+          <div id="qrBox" class="qr-box"></div>
+          <div id="instanciaStatus"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Teste rápido de envio</h2>
+          <div class="form-row">
+            <input id="testPhone" placeholder="Telefone com DDD"/>
+            <input id="testMessage" placeholder="Mensagem de teste" value="Olá! Teste Dellapiani CRM."/>
+            <button onclick="sendTest()">Enviar teste</button>
+          </div>
+          <div id="testResult"></div>
+        </div>
+      </section>
+
+      <section id="disparos" class="page hidden">
+        <div class="panel">
+          <h2>Disparos reais pelo WhatsApp</h2>
+          <p class="muted">A mensagem será enviada pela instância conectada. Use apenas para clientes autorizados.</p>
+          <div class="form">
+            <input id="blastTitle" placeholder="Nome da campanha"/>
+            <select id="blastAudience">
+              <option>Todos os clientes</option>
+              <option>Novo lead</option>
+              <option>Em atendimento</option>
+              <option>Orçamento enviado</option>
+              <option>Negociação</option>
+              <option>Pedido fechado</option>
+              <option>Perdido</option>
+              <option>Pós-venda</option>
+            </select>
+            <input id="blastInstance" placeholder="Instância WhatsApp. Ex: vendas01"/>
+            <textarea id="blastMessage" placeholder="Mensagem. Use {nome}. Ex: Olá, {nome}! Temos novidades na Dellapiani."></textarea>
+            <button onclick="sendBlast()">Enviar disparo real</button>
+          </div>
+          <div id="blastResult"></div>
+        </div>
+      </section>
+
+      <section id="vendedores" class="page hidden">
+        <div class="panel">
+          <h2>Vendedores</h2>
+          <div class="form-row short">
+            <input id="newSeller" placeholder="Nome do vendedor"/>
+            <button onclick="addSeller()">Adicionar</button>
+          </div>
+          <div id="listaVendedores"></div>
+        </div>
+      </section>
+
+      <section id="config" class="page hidden">
+        <div class="panel">
+          <h2>Configuração do servidor</h2>
+          <p class="muted">Quando publicar o backend, coloque aqui a URL do servidor.</p>
+          <input id="apiUrl" placeholder="Ex: https://seu-servidor.onrender.com"/>
+          <button onclick="saveApiUrl()">Salvar URL</button>
+          <p class="muted">Para teste local use: http://localhost:3000</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>
